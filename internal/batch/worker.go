@@ -7,6 +7,7 @@ import (
 
 	"github.com/deannos/kafka-injector/internal/config"
 	"github.com/deannos/kafka-injector/internal/model"
+	"github.com/deannos/kafka-injector/internal/producer"
 	"github.com/deannos/kafka-injector/internal/queue"
 )
 
