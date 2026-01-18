@@ -11,6 +11,7 @@ import (
 	"github.com/deannos/kafka-injector/internal/batch"
 	"github.com/deannos/kafka-injector/internal/config"
 	"github.com/deannos/kafka-injector/internal/ingress"
+	"github.com/deannos/kafka-injector/internal/metrics"
 	"github.com/deannos/kafka-injector/internal/producer"
 	"github.com/deannos/kafka-injector/internal/queue"
 )
@@ -18,6 +19,10 @@ import (
 func main() {
 	cfg := config.Load()
 	logger := log.New(os.Stdout, "", log.LstdFlags)
+
+	// Prometheus registry is global
+	// Metrics must exist before HTTP handler serves /metrics
+	metrics.Register()
 
 	q := queue.NewBoundedQueue(cfg.QueueMaxRecords, cfg.QueueMaxBytes)
 	p, err := producer.NewKafkaProducer(cfg, logger)

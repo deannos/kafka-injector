@@ -8,6 +8,7 @@ import (
 
 	"github.com/deannos/kafka-injector/internal/model"
 	"github.com/deannos/kafka-injector/internal/queue"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type HTTPServer struct {
@@ -18,6 +19,8 @@ type HTTPServer struct {
 
 func NewHTTPServer(addr string, q *queue.BoundedQueue, logger *log.Logger) *HTTPServer {
 	mux := http.NewServeMux()
+
+	mux.Handle("/metrics", promhttp.Handler())
 
 	s := &HTTPServer{
 		queue:  q,
