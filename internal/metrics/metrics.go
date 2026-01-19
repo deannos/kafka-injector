@@ -4,19 +4,28 @@ import "github.com/prometheus/client_golang/prometheus"
 
 var (
 	QueueRecords = prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "injector_queue_records",
+		Namespace: "injector",
+		Name:      "queue_records",
+		Help:      "Number of records currently queued for batching",
 	})
 
 	QueueBytes = prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "injector_queue_bytes",
+		Namespace: "injector",
+		Name:      "queue_bytes",
+		Help:      "Total bytes currently queued for batching",
 	})
 
 	BatchLatency = prometheus.NewHistogram(prometheus.HistogramOpts{
-		Name: "injector_batch_latency_ms",
+		Namespace: "injector",
+		Name:      "batch_latency_ms",
+		Help:      "Kafka batch enqueue latency in milliseconds",
+		Buckets:   []float64{0.05, 0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50},
 	})
 
 	KafkaErrors = prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "injector_kafka_errors_total",
+		Namespace: "injector",
+		Name:      "kafka_errors_total",
+		Help:      "Total number of Kafka produce errors",
 	})
 )
 
