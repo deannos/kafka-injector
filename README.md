@@ -1,6 +1,6 @@
 ## Kafka-Injector
 
-- High‑throughput HTTP → Kafka injector written in Go. Designed for low‑latency batching, backpressure safety, and first‑class observability with Promethe
+- High‑throughput HTTP → Kafka injector written in Go. Designed for low‑latency batching, backpressure safety, and first‑class observability with Prometheus.
 
 ### HLD (High-Level-Design )
 
