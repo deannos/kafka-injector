@@ -1,0 +1,70 @@
+# =====================
+# Go build artifacts
+# =====================
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+
+# Go workspace
+/bin/
+/pkg/
+
+# =====================
+# Coverage & profiling
+# =====================
+coverage.out
+coverage.txt
+cpu.prof
+mem.prof
+
+# =====================
+# Logs
+# =====================
+*.log
+logs/
+
+# =====================
+# Environment / secrets
+# =====================
+.env
+.env.*
+*.env
+
+# =====================
+# Docker
+# =====================
+**/.docker/
+docker-data/
+*.pid
+
+# =====================
+# IDE / Editor
+# =====================
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# =====================
+# OS files
+# =====================
+Thumbs.db
+
+# =====================
+# Temporary files
+# =====================
+tmp/
+temp/
+.cache/
+
+# =====================
+# Local overrides
+# =====================
+docker-compose.override.yml
+prometheus.local.yml
