@@ -2,6 +2,7 @@ package producer
 
 import (
 	"log"
+	"time"
 
 	"github.com/IBM/sarama"
 	"github.com/deannos/kafka-injector/internal/config"
@@ -28,16 +29,26 @@ Sarama package protects you by failing fast.
 func NewKafkaProducer(cfg *config.Config, logger *log.Logger) (*KafkaProducer, error) {
 	c := sarama.NewConfig()
 
-	// REQUIRED for idempotent producer
+	// Kafka version (REQUIRED)
+	c.Version = sarama.V3_6_0_0
+
+	// Idempotent producer invariants
 	c.Producer.Idempotent = true
 	c.Net.MaxOpenRequests = 1
-
 	c.Producer.RequiredAcks = sarama.WaitForAll
-	c.Producer.Retry.Max = int(^uint(0) >> 1) // infinite retries
-	c.Producer.Compression = sarama.CompressionSnappy
+
+	// Reliability
+	c.Producer.Retry.Max = 10
+	c.Producer.Retry.Backoff = 100 * time.Millisecond
 
 	c.Producer.Return.Errors = true
 	c.Producer.Return.Successes = false
+
+	//  CRITICAL FIX (correct field for v1.46.x)
+	c.Producer.Flush.Messages = 1
+
+	// Optional but recommended
+	c.Producer.Compression = sarama.CompressionSnappy
 
 	p, err := sarama.NewAsyncProducer(cfg.KafkaBrokers, c)
 	if err != nil {
@@ -58,6 +69,7 @@ func NewKafkaProducer(cfg *config.Config, logger *log.Logger) (*KafkaProducer, e
 }
 
 func (k *KafkaProducer) SendBatch(records []*model.Record) {
+	start := time.Now()
 	for _, r := range records {
 		k.async.Input() <- &sarama.ProducerMessage{
 			Topic: k.topic,
@@ -65,6 +77,11 @@ func (k *KafkaProducer) SendBatch(records []*model.Record) {
 			Value: sarama.ByteEncoder(r.Value),
 		}
 	}
+	//  THIS WAS MISSING — record batch enqueue latency
+	metrics.BatchLatency.Observe(
+		float64(time.Since(start).Milliseconds()) / 1000.0,
+	)
+
 }
 
 func (k *KafkaProducer) Close() {
